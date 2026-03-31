@@ -142,3 +142,6 @@ dist
 
 # Cursor IDE
 .cursor/
+
+# MCP config (contains credentials)
+.mcp.json

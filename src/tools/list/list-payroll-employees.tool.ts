@@ -1,15 +1,20 @@
 import { Employee } from "xero-node/dist/gen/model/payroll-nz/employee.js";
 import { listXeroPayrollEmployees } from "../../handlers/list-xero-payroll-employees.handler.js";
 import { CreateXeroTool } from "../../helpers/create-xero-tool.js";
+import { z } from "zod";
 
 const ListPayrollEmployeesTool = CreateXeroTool(
   "list-payroll-employees",
   `List all payroll employees in Xero.
 This retrieves comprehensive employee details including names, User IDs, dates of birth, email addresses, gender, phone numbers, start dates, engagement types (Permanent, FixedTerm, or Casual), titles, and when records were last updated.
-The response presents a complete overview of all staff currently registered in your Xero payroll, with their personal and employment information. If there are many employees, ask the user if they would like to see more detailed information about specific employees before proceeding.`,
-  {},
-  async () => {
-    const response = await listXeroPayrollEmployees();
+The response presents a complete overview of all staff currently registered in your Xero payroll, with their personal and employment information. If there are many employees, ask the user if they would like to see more detailed information about specific employees before proceeding.
+Ask the user if they want the next page of employees after running this tool if 100 employees are returned.
+If they want the next page, call this tool again with the next page number.`,
+  {
+    page: z.number().optional().describe("Page number to retrieve. If omitted, all employees are returned by auto-paginating through all pages."),
+  },
+  async (args: { page?: number }) => {
+    const response = await listXeroPayrollEmployees(args.page);
 
     if (response.isError) {
       return {

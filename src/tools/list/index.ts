@@ -16,6 +16,7 @@ import ListPayrollEmployeeLeaveTypesTool
   from "./list-payroll-employee-leave-types.tool.js";
 import ListPayrollEmployeeLeaveTool
   from "./list-payroll-employee-leave.tool.js";
+import ListPayrollEmployeeSalaryTool from "./list-payroll-employee-salary.tool.js";
 import ListPayrollEmployeesTool from "./list-payroll-employees.tool.js";
 import ListPayrollLeavePeriodsToolTool
   from "./list-payroll-leave-periods.tool.js";
@@ -43,6 +44,7 @@ export const ListTools = [
   ListProfitAndLossTool,
   ListBankTransactionsTool,
   ListPayrollEmployeesTool,
+  ListPayrollEmployeeSalaryTool,
   ListReportBalanceSheetTool,
   ListOrganisationDetailsTool,
   ListPayrollEmployeeLeaveTool,

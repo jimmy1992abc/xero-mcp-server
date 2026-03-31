@@ -4,28 +4,52 @@ import { formatError } from "../helpers/format-error.js";
 import { getClientHeaders } from "../helpers/get-client-headers.js";
 import { Employee } from "xero-node/dist/gen/model/payroll-nz/employee.js";
 
-async function getPayrollEmployees(): Promise<Employee[]> {
+async function getPayrollEmployees(page?: number): Promise<Employee[]> {
   await xeroClient.authenticate();
 
-  // Call the Employees endpoint from the PayrollNZApi
-  const employees = await xeroClient.payrollNZApi.getEmployees(
-    xeroClient.tenantId,
-    undefined, // page
-    undefined, // pageSize
-    getClientHeaders(),
-  );
+  if (page !== undefined) {
+    // Fetch a specific page
+    const employees = await xeroClient.payrollNZApi.getEmployees(
+      xeroClient.tenantId,
+      undefined, // filter
+      page,
+      getClientHeaders(),
+    );
+    return employees.body.employees ?? [];
+  }
 
-  return employees.body.employees ?? [];
+  // Auto-paginate to fetch all employees
+  const allEmployees: Employee[] = [];
+  let currentPage = 1;
+
+  while (true) {
+    const response = await xeroClient.payrollNZApi.getEmployees(
+      xeroClient.tenantId,
+      undefined, // filter
+      currentPage,
+      getClientHeaders(),
+    );
+
+    const employees = response.body.employees ?? [];
+    allEmployees.push(...employees);
+
+    if (employees.length < 100) {
+      break;
+    }
+    currentPage++;
+  }
+
+  return allEmployees;
 }
 
 /**
  * List all payroll employees from Xero
  */
-export async function listXeroPayrollEmployees(): Promise<
+export async function listXeroPayrollEmployees(page?: number): Promise<
   XeroClientResponse<Employee[]>
 > {
   try {
-    const employees = await getPayrollEmployees();
+    const employees = await getPayrollEmployees(page);
 
     return {
       result: employees,
