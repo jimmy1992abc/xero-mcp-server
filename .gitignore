@@ -145,3 +145,6 @@ dist
 
 # MCP config (contains credentials)
 .mcp.json
+
+# Local MCP launcher (machine-specific path)
+mcp-start.sh
